@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Temporal Quest — Chronicles of Islamic History</title>
+<style>
+:root{--green:#0b3d2e;--emerald:#00e6a0;--lime:#b5ff75;--gold:#ffd66b;--dark:#061711;--panel:rgba(5,28,21,.82);--white:#edfff7}
+*{box-sizing:border-box}body{margin:0;color:var(--white);font-family:system-ui,Segoe UI,sans-serif;background:#03120d;overflow-x:hidden}
+button,input,select{font:inherit}button{cursor:pointer;border:1px solid #58f5b5;background:linear-gradient(135deg,#08734e,#0b3b2c);color:white;padding:12px 18px;border-radius:12px;font-weight:800;transition:.2s}button:hover{transform:translateY(-2px);filter:brightness(1.2)}button:disabled{opacity:.4;cursor:not-allowed;transform:none}
+#world{position:fixed;inset:0;z-index:-2;background:radial-gradient(ellipse at 50% 35%,#176c48 0,#092c20 35%,#03120d 75%);overflow:hidden}
+#world:before{content:"";position:absolute;inset:-10%;background:linear-gradient(transparent 65%,#020b07),radial-gradient(circle at 15% 20%,#6cffb044 0 2px,transparent 3px),radial-gradient(circle at 80% 45%,#d7ff8a55 0 2px,transparent 3px);background-size:auto,90px 110px,130px 160px;animation:stars 14s linear infinite}
+@keyframes stars{to{background-position:0 0,0 -300px,0 -400px}}
+.tree{position:absolute;left:50%;top:18%;transform:translateX(-50%);font-size:min(40vw,420px);opacity:.16;filter:drop-shadow(0 0 35px #00ff9d);animation:pulse 5s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.28;filter:drop-shadow(0 0 70px #00ff9d)}}
+#particles{position:absolute;inset:0;pointer-events:none}.particle{position:absolute;width:4px;height:4px;border-radius:50%;background:#b5ff75;box-shadow:0 0 12px #b5ff75;animation:float 8s linear infinite}@keyframes float{from{transform:translateY(110vh)}to{transform:translateY(-10vh)}}
+header{display:flex;justify-content:space-between;align-items:center;padding:16px 4%;gap:12px}.brand{font-weight:1000;letter-spacing:2px;color:var(--lime)}.hud{display:flex;gap:10px;flex-wrap:wrap}.chip{background:#05271dce;border:1px solid #2aa878;border-radius:99px;padding:8px 12px;font-size:.85rem}
+main{max-width:1100px;margin:0 auto;padding:18px}.screen{display:none}.screen.active{display:block;animation:fade .5s ease}@keyframes fade{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.card{background:var(--panel);border:1px solid #2b9669;border-radius:22px;padding:clamp(18px,4vw,32px);box-shadow:0 0 35px #00ff9d13;backdrop-filter:blur(10px)}
+.hero{text-align:center;margin:5vh auto;max-width:850px}.eyebrow{color:var(--gold);letter-spacing:4px;font-size:.8rem;font-weight:900}.hero h1{font-size:clamp(2.3rem,7vw,5rem);line-height:1;margin:14px 0;text-shadow:0 0 25px #00ff9d55}.hero h1 span{color:var(--lime)}.lead{color:#c5e9d9;max-width:650px;margin:20px auto;line-height:1.7}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}.center{justify-content:center}.field{display:grid;gap:6px;margin:12px 0;text-align:left}.field input,.field select{width:100%;padding:12px;border-radius:10px;background:#041b13;border:1px solid #398d69;color:white}
+.rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:18px 0}.rule{padding:14px;border-radius:14px;background:#0a3829;border:1px solid #246c4c}.rule b{color:var(--gold)}
+.avatar-preview{font-size:5rem;filter:drop-shadow(0 0 20px #00ff9d);animation:bob 2s ease-in-out infinite}@keyframes bob{50%{transform:translateY(-10px)}}
+.mapgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:18px}.level{min-height:125px;text-align:left;position:relative;background:#09271d;border-color:#2b7954}.level.done{border-color:var(--gold);background:#3b3215}.level.current{box-shadow:0 0 18px #00ff9d66;border-color:var(--lime)}.level small{display:block;color:#a6d7bf;margin-top:8px}.level .branch{font-size:1.5rem}
+.progress{height:10px;background:#09251a;border-radius:99px;overflow:hidden;margin:14px 0}.progress span{display:block;height:100%;background:linear-gradient(90deg,#00a86b,#c4ff75);width:0;transition:width .4s}
+.question{font-size:clamp(1.2rem,3vw,1.8rem);font-weight:850;margin:20px 0}.answers{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}.answer{text-align:left;background:#08291e;border-color:#2d7453}.answer.correct{background:#075c36;border-color:#b5ff75}.answer.wrong{background:#64251d;border-color:#ff7e70}.feedback{min-height:50px;color:var(--gold);margin:14px 0;font-weight:700}
+#player{position:fixed;bottom:20px;left:20px;z-index:3;display:none;align-items:center;gap:10px;background:#041c14dd;border:1px solid #2b9669;border-radius:18px;padding:10px 16px;animation:walk 1.2s ease-in-out infinite}@keyframes walk{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+#portal{position:fixed;inset:0;background:radial-gradient(circle,#b5ff75aa,#00a86b44,transparent 70%);opacity:0;pointer-events:none;z-index:10;transition:opacity .7s}#portal.open{opacity:1}
+footer{text-align:center;color:#79aa91;padding:30px;font-size:.8rem}
+
+.modecard{min-height:160px;text-align:left;background:linear-gradient(145deg,#0c3d2c,#071e16);border:1px solid #41c98c}
+.modecard.selected{border-color:#ffe27a;box-shadow:0 0 20px #ffd66b55}
+.modecard .modeicon{font-size:2.2rem;display:block;margin-bottom:8px}
+@media(max-width:600px){header{align-items:flex-start;flex-direction:column}.hero{margin:2vh auto}.hud{font-size:.8rem}main{padding:10px}}
+</style>
+</head>
+<body>
+<div id="world"><div class="tree">🌳</div><div id="particles"></div></div><div id="portal"></div>
+<header><div class="brand">✦ TEMPORAL QUEST</div><div class="hud"><span class="chip">👤 <b id="hudName">Penjelajah</b></span><span class="chip">⭐ EXP <b id="hudExp">0</b></span><span class="chip">🪙 <b id="hudGold">0</b></span><span class="chip">⏳ <b id="clock">00:00</b></span></div></header>
+<div id="player"><span id="playerEmoji">🧙</span><b id="playerName">Penjelajah</b><span>➜</span></div>
+<main>
+<section id="welcome" class="screen active"><div class="hero card"><div class="eyebrow">A FANTASY SKI ARCADE ADVENTURE</div><h1>CHRONICLES OF<br><span>ISLAMIC HISTORY</span></h1><h2>⟡ TEMPORAL QUEST ⟡</h2><p class="lead">Assalamu’alaikum, Penjelajah Sejarah! Pohon waktu kehilangan cabang-cabangnya. Jelajahi 20 gerbang sejarah Islam, pecahkan tantangan, dan pulihkan Temporal Kingdom.</p><div class="avatar-preview">🧙‍♂️</div><div class="row center"><button onclick="show('rules')">⚔ MULAI PETUALANGAN</button><button onclick="show('guide')">📜 PANDUAN</button></div></div></section>
+<section id="guide" class="screen"><div class="card"><h2>📜 Panduan Penjelajah</h2><p>Jawab soal SKI untuk mendapatkan EXP dan koin. Selesaikan level untuk membuka cabang waktu berikutnya. Progres tersimpan di browser perangkat ini.</p><button onclick="show('welcome')">Kembali</button></div></section>
+<section id="rules" class="screen"><div class="card"><h2>⚔ Enam Peraturan Petualangan</h2><div class="rules"><div class="rule"><b>01</b><br>Gunakan identitas pemain sesuai arahan guru.</div><div class="rule"><b>02</b><br>Selesaikan misi pada setiap level.</div><div class="rule"><b>03</b><br>Jawaban benar menghasilkan EXP dan koin.</div><div class="rule"><b>04</b><br>Baca materi dan pembahasan sejarah dengan cermat.</div><div class="rule"><b>05</b><br>Progres tersimpan pada browser yang digunakan.</div><div class="rule"><b>06</b><br>Jadilah Legendary Historian dengan menuntaskan misi.</div></div><label><input type="checkbox" id="agree"> Saya memahami dan siap berpetualang.</label><div class="row center"><button onclick="if(document.getElementById('agree').checked)show('identity');else alert('Centang persetujuan terlebih dahulu!')">SIAP!</button></div></div></section>
+<section id="identity" class="screen"><div class="card"><h2>🧝 Buat Penjelajahmu</h2><div class="row"><div style="flex:1;min-width:230px"><div class="field"><label>Nama pemain</label><input id="name" placeholder="Masukkan nama"></div><div class="field"><label>Kelas</label><input id="kelas" placeholder="Contoh: XI IPS 1"></div><div class="field"><label>Nomor peserta</label><input id="no" placeholder="Nomor peserta"></div><div class="field"><label>Avatar</label><select id="avatar" onchange="document.getElementById('avatarShow').textContent=this.value"><option value="🧙‍♂️">Chrono Mage</option><option value="🛡️">Emerald Knight</option><option value="🧝">Forest Explorer</option><option value="🧞">Temporal Guardian</option><option value="👑">Sultan's Guardian</option></select></div></div><div class="avatar-preview" id="avatarShow">🧙‍♂️</div></div><button onclick="startGame()">MASUK KE KERAJAAN TEMPORAL ➜</button></div></section>
+<section id="map" class="screen"><div class="card"><div class="row" style="justify-content:space-between"><div><div class="eyebrow">TEMPORAL TREE</div><h2>🌳 Pohon Cabang Waktu</h2><p>Pilih gerbang yang telah terbuka. Cabang emas menandakan level selesai.</p></div><div class="chip">🏅 <span id="rank">History Beginner</span></div></div><div class="progress"><span id="mapProgress"></span></div><div id="mapgrid" class="mapgrid"></div><div class="row center" style="margin-top:18px"><button onclick="show('avatarShop')">🎒 INVENTORI & AVATAR</button><button onclick="resetGame()">RESET PROGRES</button></div></div></section>
+<section id="avatarShop" class="screen"><div class="card"><h2>🎒 Inventori Temporal</h2><p>Koin: <b id="shopGold">0</b> 🪙</p><div class="rules"><div class="rule">🧙 Chrono Mage<br>Gratis — avatar awal</div><div class="rule">🛡️ Emerald Armor<br>100 koin</div><div class="rule">👑 Golden Crown<br>200 koin</div><div class="rule">🪽 Temporal Wings<br>300 koin</div></div><div class="row"><button onclick="buy(100,'🛡️')">Beli Armor (100)</button><button onclick="buy(200,'👑')">Beli Crown (200)</button><button onclick="buy(300,'🪽')">Beli Wings (300)</button><button onclick="show('map')">Kembali ke pohon</button></div></div></section>
+
+<section id="teacherLogin" class="screen"><div class="card hero"><div class="eyebrow">TEACHER ACCESS • TEMPORAL CONTROL</div><h2>🎓 Dasbor Guru</h2><p class="lead">Masukkan ID guru untuk membuka panel pemantauan asesmen.</p><div class="field" style="max-width:420px;margin:20px auto"><label>ID Guru</label><input id="teacherId" placeholder="Masukkan ID guru" autocomplete="off"></div><div class="row center"><button onclick="teacherLogin()">🔐 MASUK DASBOR</button><button onclick="show('welcome')">Kembali</button></div><p id="teacherError" style="color:#ffb6a8"></p><small>Panel lokal • Data tersimpan pada browser perangkat ini</small></div></section>
+<section id="teacherDashboard" class="screen"><div class="card"><div class="row" style="justify-content:space-between"><div><div class="eyebrow">TEACHER CONTROL ROOM</div><h2>🎓 Dasbor Guru — Temporal Quest</h2><p>Ringkasan progres pemain pada perangkat ini.</p></div><button onclick="show('welcome')">Keluar Dasbor</button></div><div class="rules"><div class="rule"><b>👥 Pemain aktif</b><h2 id="teacherPlayers">0</h2></div><div class="rule"><b>🌳 Level selesai</b><h2 id="teacherLevels">0 / 20</h2></div><div class="rule"><b>⭐ Total EXP</b><h2 id="teacherExp">0</h2></div><div class="rule"><b>🎯 Akurasi terakhir</b><h2 id="teacherAccuracy">—</h2></div></div><div id="teacherStudentInfo" class="rule"></div><div class="row"><button onclick="exportTeacherCSV()">⬇️ EKSPOR DATA CSV</button><button onclick="teacherRefresh()">🔄 REFRESH</button><button onclick="teacherClearLocal()" style="background:#65271e;border-color:#ff8b7d">🗑 Hapus data lokal siswa</button></div><p style="color:#b5dcca;font-size:.9rem">Catatan: dasbor ini membaca data game pada browser yang sama. Untuk rekap seluruh kelas dari perangkat berbeda, diperlukan backend/database.</p></div></section>
+<section id="gameModes" class="screen"><div class="card"><div class="eyebrow">SELECT YOUR GAMEPLAY</div><h2>🎮 Pilih Mode Game</h2><p>Selain Story Campaign, tersedia enam mode tantangan dengan gaya bermain berbeda.</p><div id="modeGrid" class="mapgrid"></div><div class="row center"><button onclick="show('map')">Kembali ke pohon waktu</button></div></div></section>
+<section id="quiz" class="screen"><div class="card"><div class="row" style="justify-content:space-between"><div><div class="eyebrow" id="levelTag">LEVEL 01</div><h2 id="levelName">The Origin</h2></div><div class="chip">❤️ <span id="health">100</span> | 🔥 <span id="streak">0</span></div></div><div class="progress"><span id="quizProgress"></span></div><div id="qcount"></div><div class="question" id="question"></div><div class="answers" id="answers"></div><div class="feedback" id="feedback"></div><div class="row" style="justify-content:space-between"><button onclick="pauseGame()">⏸ PAUSE</button><button id="nextBtn" disabled onclick="nextQuestion()">LANJUT ➜</button></div></div></section>
+<section id="result" class="screen"><div class="card hero"><div class="eyebrow">TEMPORAL MISSION REPORT</div><h1 id="resultTitle">LEVEL COMPLETE!</h1><div class="avatar-preview" id="resultAvatar">🧙</div><h2 id="resultScore"></h2><p id="resultDetail"></p><div class="row center"><button onclick="show('map')">🌳 POHON WAKTU</button><button onclick="nextLevel()">GERBANG BERIKUTNYA ➜</button></div></div></section>
+</main><footer>Temporal Quest • Media asesmen Sejarah Kebudayaan Islam • Prototipe edukasi</footer>
+<script>
+const levels=[
+["The Origin","Kondisi masyarakat Arab sebelum Islam",[
+["Apa sebutan zaman masyarakat Arab sebelum Islam?","Jahiliyah","Abbasiyah","Umayyah","Fatimiyah",0,"Jahiliyah merujuk pada kondisi sosial dan keagamaan sebelum Islam."],
+["Di wilayah manakah Nabi Muhammad ﷺ dilahirkan?","Madinah","Makkah","Damaskus","Baghdad",1,"Nabi Muhammad ﷺ lahir di Makkah."],
+["Apa nama suku terkemuka di Makkah?","Aus","Khazraj","Quraisy","Tsaqif",2,"Quraisy merupakan suku berpengaruh di Makkah."],
+["Apa bangunan suci yang berada di Makkah?","Masjid Nabawi","Ka'bah","Al-Aqsa","Kubah Batu",1,"Ka'bah berada di Masjidil Haram, Makkah."],
+["Mata pencaharian penting masyarakat Makkah adalah…","Perdagangan","Pertambangan","Perikanan","Industri kapal",0,"Makkah menjadi pusat perdagangan dan ziarah."]
+]],
+["The First Revelation","Turunnya wahyu pertama",[
+["Di gua apakah wahyu pertama diturunkan?","Tsur","Hira","Uhud","Quba",1,"Wahyu pertama turun di Gua Hira."],
+["Siapakah malaikat yang menyampaikan wahyu?","Mikail","Israfil","Jibril","Malik",2,"Malaikat Jibril menyampaikan wahyu kepada Nabi."],
+["Apa kata pertama wahyu yang diterima?","Iqra'","Qul","Alhamdu","Subhan",0,"Wahyu pertama dimulai dengan kata Iqra'."],
+["Surah apakah yang menjadi wahyu pertama?","Al-Fatihah","Al-'Alaq","An-Nas","Al-Ikhlas",1,"Ayat awal Surah Al-'Alaq dikenal sebagai wahyu pertama."],
+["Berapa usia Nabi saat menerima wahyu pertama?","25","35","40","50",2,"Nabi Muhammad ﷺ berusia sekitar 40 tahun."]
+]],
+["The Hidden Mission","Dakwah secara sembunyi-sembunyi",[
+["Siapakah perempuan pertama yang beriman?","Aisyah","Khadijah","Hafsah","Fatimah",1,"Khadijah binti Khuwailid adalah orang pertama yang beriman."],
+["Siapa anak-anak yang termasuk pemeluk Islam awal?","Ali bin Abi Thalib","Abu Lahab","Abu Jahal","Umayyah bin Khalaf",0,"Ali bin Abi Thalib termasuk pemeluk Islam awal."],
+["Di rumah siapa kaum Muslim awal berkumpul?","Arqam bin Abi Arqam","Abu Sufyan","Bilal","Umar",0,"Rumah Al-Arqam menjadi tempat pembinaan awal."],
+["Dakwah sembunyi-sembunyi berlangsung sekitar…","1 tahun","3 tahun","10 tahun","15 tahun",1,"Dakwah secara sembunyi-sembunyi berlangsung sekitar tiga tahun."],
+["Tujuan dakwah awal adalah…","Membangun kerajaan","Menanamkan tauhid","Menguasai pasar","Membentuk pasukan besar",1,"Tauhid menjadi inti dakwah Rasulullah."]
+]],
+["The Open Call","Dakwah terang-terangan",[
+["Dakwah terang-terangan dimulai setelah…","Perintah Allah","Perang Badar","Hijrah","Fathu Makkah",0,"Rasulullah menerima perintah untuk menyampaikan dakwah terbuka."],
+["Di bukit mana Nabi menyeru Quraisy?","Uhud","Shafa","Marwah","Arafah",1,"Nabi menyeru kaum Quraisy di Bukit Shafa."],
+["Siapa yang menentang Nabi dengan keras?","Abu Lahab","Bilal","Hamzah","Zaid",0,"Abu Lahab menjadi penentang dakwah."],
+["Inti ajaran dakwah Nabi adalah…","Penyembahan berhala","Tauhid","Kasta","Balas dendam",1,"Dakwah mengajak menyembah Allah Yang Esa."],
+["Sikap kaum Muslim menghadapi penentangan adalah…","Sabar dan teguh","Menyerah","Meninggalkan ajaran","Membalas tanpa batas",0,"Kesabaran menjadi teladan dalam menghadapi tekanan."]
+]],
+["Journey to Madinah","Hijrah Rasulullah",[
+["Hijrah Rasulullah dilakukan dari…","Madinah ke Makkah","Makkah ke Madinah","Taif ke Syam","Baghdad ke Makkah",1,"Rasulullah hijrah dari Makkah menuju Madinah."],
+["Siapa sahabat yang menemani Nabi dalam hijrah?","Umar","Ali","Abu Bakar","Utsman",2,"Abu Bakar menemani Rasulullah."],
+["Gua tempat bersembunyi saat hijrah adalah…","Hira","Tsur","Quba","Uhud",1,"Nabi dan Abu Bakar bersembunyi di Gua Tsur."],
+["Nama Yatsrib setelah hijrah dikenal sebagai…","Madinah","Kufah","Damaskus","Kairo",0,"Yatsrib kemudian dikenal sebagai Madinah."],
+["Hijrah menjadi titik penting kalender…","Hijriah","Romawi","Persia","Masehi",0,"Peristiwa hijrah menjadi awal penanggalan Hijriah."]
+]],
+["The City of Light","Masyarakat Madinah",[
+["Masjid pertama yang dibangun Nabi saat tiba adalah…","Masjid Quba","Masjid Al-Aqsa","Masjidil Haram","Masjid Kufah",0,"Masjid Quba dibangun dalam perjalanan menuju Madinah."],
+["Kaum Muslim yang berhijrah disebut…","Ansar","Muhajirin","Tabiin","Quraisy",1,"Muhajirin adalah kaum yang berhijrah dari Makkah."],
+["Penduduk Madinah yang menolong Muhajirin disebut…","Ansar","Muhajirin","Romawi","Persia",0,"Ansar berarti kaum penolong dari Madinah."],
+["Piagam Madinah mengatur…","Hubungan masyarakat Madinah","Perdagangan India","Pembangunan Ka'bah","Penaklukan Andalusia",0,"Piagam Madinah mengatur kehidupan bersama masyarakat."],
+["Salah satu tindakan Nabi di Madinah adalah…","Mempersaudarakan Muhajirin dan Ansar","Menghapus semua perdagangan","Memindahkan Ka'bah","Menutup masjid",0,"Persaudaraan memperkuat solidaritas masyarakat."]
+]],
+["Battle of Badr","Perang Badar",[
+["Perang Badar terjadi pada tahun…","1 H","2 H","5 H","8 H",1,"Perang Badar terjadi pada 2 Hijriah."],
+["Badar merupakan perang antara Muslim dan…","Quraisy Makkah","Romawi","Persia","Mongol",0,"Pasukan Muslim menghadapi Quraisy Makkah."],
+["Perang Badar dikenal sebagai…","Perang pertama besar kaum Muslim","Perang terakhir","Perang di Andalusia","Perang melawan Mongol",0,"Badar merupakan pertempuran besar pertama kaum Muslim."],
+["Jumlah pasukan Muslim di Badar sekitar…","313","1000","5000","10000",0,"Jumlah pasukan Muslim sering disebut sekitar 313 orang."],
+["Pelajaran utama dari Badar adalah…","Keimanan dan keteguhan","Kesombongan","Menghindari persatuan","Mementingkan harta",0,"Badar menekankan keimanan, strategi, dan keteguhan."]
+]],
+["Trial of Uhud","Perang Uhud",[
+["Perang Uhud terjadi pada tahun…","2 H","3 H","6 H","8 H",1,"Perang Uhud berlangsung pada 3 Hijriah."],
+["Uhud berada di dekat…","Madinah","Baghdad","Damaskus","Kairo",0,"Gunung Uhud berada di sekitar Madinah."],
+["Pasukan pemanah ditempatkan di…","Bukit strategis","Dalam gua","Pasar","Pelabuhan",0,"Pemanah ditempatkan di bukit untuk menjaga posisi."],
+["Salah satu pelajaran Uhud adalah…","Pentingnya menaati komando","Mengabaikan strategi","Tidak perlu disiplin","Berpecah belah",0,"Ketaatan pada instruksi sangat penting."],
+["Siapa paman Nabi yang gugur di Uhud?","Hamzah","Abbas","Abu Talib","Harits",0,"Hamzah bin Abdul Muthalib gugur dalam Perang Uhud."]
+]],
+["Treaty of Peace","Perjanjian Hudaibiyah",[
+["Hudaibiyah terjadi pada tahun…","2 H","4 H","6 H","9 H",2,"Perjanjian Hudaibiyah berlangsung pada 6 Hijriah."],
+["Perjanjian dibuat antara Muslim dan…","Quraisy","Persia","Romawi","Mongol",0,"Perjanjian dibuat dengan kaum Quraisy Makkah."],
+["Hudaibiyah pada awalnya tampak…","Merugikan sebagian Muslim","Kemenangan perang","Tidak memiliki dampak","Perjanjian dagang India",0,"Sebagian ketentuan tampak berat, tetapi berdampak besar."],
+["Hudaibiyah membuka peluang…","Dakwah lebih luas","Perang tanpa akhir","Penghapusan ibadah","Penutupan Madinah",0,"Masa damai memberi ruang penyebaran Islam."],
+["Siapa utusan Nabi dalam perundingan?","Utsman bin Affan","Bilal","Khalid bin Walid","Salman",0,"Utsman bin Affan diutus ke Makkah."]
+]],
+["The Conquest","Fathu Makkah",[
+["Fathu Makkah terjadi pada tahun…","6 H","7 H","8 H","10 H",2,"Fathu Makkah berlangsung pada 8 Hijriah."],
+["Fathu Makkah berarti…","Pembebasan/penaklukan Makkah","Hijrah ke Habasyah","Perang Uhud","Pembangunan Baghdad",0,"Fathu Makkah berarti pembebasan Makkah."],
+["Sikap Nabi terhadap banyak penduduk Makkah adalah…","Memberi pengampunan","Mengusir semuanya","Membalas dendam","Memaksa pindah",0,"Nabi menunjukkan sikap pemaaf dan penuh rahmat."],
+["Ka'bah dibersihkan dari…","Berhala","Kitab","Air","Pohon",0,"Berhala di sekitar Ka'bah dihancurkan."],
+["Fathu Makkah menunjukkan…","Akhlak pemaaf Nabi","Kebencian tanpa batas","Perpecahan umat","Kegagalan dakwah",0,"Peristiwa ini menunjukkan rahmat dan pengampunan."]
+]],
+["The Final Message","Akhir kehidupan Rasulullah",[
+["Nabi Muhammad ﷺ wafat pada tahun…","10 H","11 H","12 H","13 H",1,"Rasulullah wafat pada 11 Hijriah."],
+["Nabi wafat di kota…","Makkah","Madinah","Taif","Syam",1,"Rasulullah wafat di Madinah."],
+["Khutbah terakhir Nabi dikenal sebagai…","Khutbah Wada'","Khutbah Badar","Khutbah Uhud","Khutbah Quba",0,"Khutbah Wada' disampaikan pada haji perpisahan."],
+["Haji perpisahan berlangsung pada tahun…","8 H","9 H","10 H","11 H",2,"Haji Wada' berlangsung pada 10 Hijriah."],
+["Pesan penting Nabi adalah…","Menjaga amanah dan persaudaraan","Mengutamakan kesombongan","Memutus silaturahmi","Mengabaikan ibadah",0,"Nabi menekankan amanah, hak, dan persaudaraan."]
+]],
+["The First Caliph","Abu Bakar Ash-Shiddiq",[
+["Khalifah pertama adalah…","Umar","Abu Bakar","Utsman","Ali",1,"Abu Bakar menjadi khalifah pertama."],
+["Gelar Abu Bakar adalah…","Al-Faruq","Ash-Shiddiq","Dzun Nurain","Karramallahu Wajhah",1,"Ash-Shiddiq berarti yang membenarkan."],
+["Perang pada masa Abu Bakar untuk menghadapi…","Gerakan riddah","Perang Salib","Mongol","Perang Uhud",0,"Abu Bakar menghadapi gerakan riddah."],
+["Pengumpulan mushaf Al-Qur'an mulai dilakukan pada masa…","Abu Bakar","Muawiyah","Harun ar-Rasyid","Al-Ma'mun",0,"Pengumpulan mushaf dilakukan pada masa Abu Bakar."],
+["Abu Bakar memimpin setelah…","Wafatnya Rasulullah","Perang Badar","Hijrah","Fathu Makkah",0,"Abu Bakar dipilih setelah Rasulullah wafat."]
+]],
+["The Expansion","Umar bin Khattab",[
+["Khalifah kedua adalah…","Ali","Umar","Utsman","Abu Bakar",1,"Umar bin Khattab adalah khalifah kedua."],
+["Gelar Umar adalah…","Ash-Shiddiq","Al-Faruq","Dzun Nurain","Al-Amin",1,"Al-Faruq berarti pembeda antara benar dan salah."],
+["Kalender Hijriah ditetapkan pada masa…","Umar","Abu Bakar","Ali","Utsman",0,"Penetapan kalender Hijriah dilakukan pada masa Umar."],
+["Umar dikenal dengan sikap…","Adil dan tegas","Boros","Tidak peduli","Pemalas",0,"Umar dikenal sebagai pemimpin yang adil dan tegas."],
+["Baitul Mal berkaitan dengan…","Pengelolaan keuangan negara","Pembuatan kapal","Pendidikan militer saja","Pertanian pribadi",0,"Baitul Mal mengelola keuangan publik."]
+]],
+["Golden Administration","Utsman bin Affan",[
+["Khalifah ketiga adalah…","Utsman","Umar","Ali","Abu Bakar",0,"Utsman bin Affan adalah khalifah ketiga."],
+["Gelar Utsman adalah…","Al-Faruq","Ash-Shiddiq","Dzun Nurain","Saifullah",2,"Dzun Nurain berarti pemilik dua cahaya."],
+["Jasa penting Utsman adalah…","Standardisasi mushaf","Membangun Baghdad","Mendirikan Umayyah","Membuat kalender Masehi",0,"Utsman menstandardisasi mushaf Al-Qur'an."],
+["Utsman berasal dari keluarga…","Bani Umayyah","Bani Abbas","Bani Seljuk","Bani Fatimiyah",0,"Utsman berasal dari Bani Umayyah."],
+["Utsman dikenal sebagai pribadi…","Dermawan","Kikir","Pemarah","Tidak amanah",0,"Utsman terkenal dermawan dan pemalu."]
+]],
+["Age of Knowledge","Ali bin Abi Thalib",[
+["Khalifah keempat adalah…","Ali","Umar","Utsman","Muawiyah",0,"Ali bin Abi Thalib adalah khalifah keempat."],
+["Ali dikenal sebagai…","Sepupu dan menantu Nabi","Paman Abu Lahab","Raja Persia","Khalifah Abbasiyah",0,"Ali adalah sepupu dan menantu Rasulullah."],
+["Ali menikah dengan…","Khadijah","Aisyah","Fatimah","Hafsah",2,"Ali menikah dengan Fatimah az-Zahra."],
+["Ali terkenal dengan ilmu dan…","Keberanian","Kemewahan","Perdagangan laut","Arsitektur",0,"Ali dikenal berilmu dan berani."],
+["Masa Khulafaur Rasyidin berakhir pada…","Masa Ali","Masa Abu Bakar","Masa Umar","Masa Utsman",0,"Ali merupakan khalifah terakhir dalam periode Khulafaur Rasyidin."]
+]],
+["Umayyad Legacy","Dinasti Umayyah",[
+["Dinasti Umayyah didirikan oleh…","Muawiyah bin Abi Sufyan","Harun ar-Rasyid","Abu Muslim","Al-Ma'mun",0,"Muawiyah mendirikan Dinasti Umayyah."],
+["Pusat pemerintahan Umayyah adalah…","Damaskus","Baghdad","Kairo","Cordoba",0,"Damaskus menjadi ibu kota Umayyah."],
+["Dinasti Umayyah berkuasa setelah periode…","Khulafaur Rasyidin","Abbasiyah","Fatimiyah","Utsmaniyah",0,"Umayyah muncul setelah masa Khulafaur Rasyidin."],
+["Wilayah Islam berkembang hingga…","Andalusia","Jepang saja","Australia saja","Amerika",0,"Ekspansi Umayyah mencapai Andalusia."],
+["Bahasa administrasi yang diperkuat pada masa Umayyah adalah…","Arab","Latin","Sanskerta","Cina",0,"Bahasa Arab menjadi bahasa administrasi."]
+]],
+["Abbasid Gate","Dinasti Abbasiyah",[
+["Dinasti Abbasiyah berpusat di…","Baghdad","Damaskus","Makkah","Kairo",0,"Baghdad menjadi pusat pemerintahan Abbasiyah."],
+["Pendiri Abbasiyah yang dikenal adalah…","Abu al-Abbas as-Saffah","Muawiyah","Saladin","Mehmed II",0,"As-Saffah merupakan khalifah pertama Abbasiyah."],
+["Abbasiyah terkenal mendukung…","Ilmu pengetahuan","Penutupan perpustakaan","Larangan belajar","Penghapusan perdagangan",0,"Abbasiyah mendukung perkembangan ilmu."],
+["Bait al-Hikmah berada di…","Baghdad","Madinah","Cordoba","Damaskus",0,"Bait al-Hikmah berkembang di Baghdad."],
+["Salah satu khalifah terkenal Abbasiyah adalah…","Harun ar-Rasyid","Abu Lahab","Bilal","Hamzah",0,"Harun ar-Rasyid dikenal sebagai khalifah Abbasiyah."]
+]],
+["Golden Age","Ilmu pengetahuan Islam",[
+["Bait al-Hikmah berfungsi sebagai…","Pusat ilmu dan penerjemahan","Benteng perang","Pasar hewan","Pelabuhan",0,"Bait al-Hikmah menjadi pusat keilmuan."],
+["Tokoh matematika yang dikenal dengan aljabar adalah…","Al-Khawarizmi","Ibn Battuta","Al-Ghazali","Ibn Khaldun",0,"Al-Khawarizmi berkontribusi pada aljabar."],
+["Ibn Sina dikenal dalam bidang…","Kedokteran","Arsitektur kapal","Astronomi saja","Politik",0,"Ibn Sina adalah tokoh penting kedokteran."],
+["Al-Biruni berkontribusi dalam…","Astronomi dan ilmu alam","Seni bela diri","Pembuatan senjata","Sastra modern",0,"Al-Biruni mempelajari berbagai ilmu."],
+["Salah satu faktor kemajuan ilmu adalah…","Gerakan penerjemahan","Menolak ilmu","Menutup sekolah","Menghentikan perdagangan",0,"Penerjemahan dan patronase mendukung ilmu."]
+]],
+["Islamic Kingdoms","Perkembangan Islam di dunia",[
+["Islam berkembang di Andalusia pada wilayah…","Semenanjung Iberia","India Selatan saja","Jepang","Skandinavia",0,"Andalusia berada di Semenanjung Iberia."],
+["Tokoh yang terkait penaklukan Andalusia adalah…","Tariq bin Ziyad","Al-Khawarizmi","Ibn Sina","Umar bin Abdul Aziz",0,"Tariq bin Ziyad memimpin penyeberangan ke Iberia."],
+["Islam masuk ke Nusantara terutama melalui…","Perdagangan dan dakwah","Penjelajahan ruang angkasa","Perang Romawi","Kolonisasi Amerika",0,"Perdagangan dan dakwah berperan besar dalam penyebaran Islam."],
+["Salah satu kerajaan Islam awal di Nusantara adalah…","Samudra Pasai","Majapahit Islam","Romawi","Athena",0,"Samudra Pasai dikenal sebagai kerajaan Islam awal."],
+["Wali Songo berperan dalam penyebaran Islam di…","Jawa","Mesir","Persia","Andalusia",0,"Wali Songo dikenal dalam dakwah di Jawa."]
+]],
+["Temporal Guardian","Misi final sejarah Islam",[
+["Apa tujuan utama mempelajari SKI?","Memahami teladan dan perkembangan peradaban","Menghafal tanpa makna","Melupakan masa lalu","Membandingkan tanpa bukti",0,"SKI membantu memahami teladan, nilai, dan peradaban."],
+["Sikap penting saat meneliti sejarah adalah…","Kritis terhadap sumber","Menerima semua cerita","Mengabaikan bukti","Mengubah fakta",0,"Kajian sejarah memerlukan sumber dan sikap kritis."],
+["Peradaban Islam berkembang melalui…","Ilmu, perdagangan, dan budaya","Satu faktor saja","Isolasi total","Larangan pendidikan",0,"Peradaban berkembang melalui banyak faktor."],
+["Nilai teladan dari sejarah para khalifah adalah…","Amanah dan tanggung jawab","Keserakahan","Ketidakadilan","Permusuhan",0,"Amanah dan tanggung jawab merupakan nilai penting."],
+["Seorang penjaga sejarah harus…","Menjaga fakta dan mengambil hikmah","Menyebarkan informasi palsu","Mengabaikan sumber","Memalsukan peristiwa",0,"Penjaga sejarah menyampaikan fakta secara bertanggung jawab."]
+]]
+];
+// pad to 20 levels by reusing distinct themed quiz blocks with questions randomized if somehow fewer
+const names=["The Origin","The First Revelation","The Hidden Mission","The Open Call","Journey to Madinah","The City of Light","Battle of Badr","Trial of Uhud","Treaty of Peace","The Conquest","The Final Message","The First Caliph","The Expansion","Golden Administration","Age of Knowledge","Umayyad Legacy","Abbasid Gate","Golden Age","Islamic Kingdoms","Temporal Guardian"];
+let state={name:"Penjelajah",kelas:"",no:"",avatar:"🧙‍♂️",exp:0,gold:0,completed:[],level:0,question:0,correct:0,streak:0,health:100,inventory:[],gameMode:"story",lastAccuracy:0,attempted:0};
+function save(){localStorage.setItem("temporalQuestSave",JSON.stringify(state))}
+function load(){try{let s=JSON.parse(localStorage.getItem("temporalQuestSave"));if(s)state={...state,...s}}catch(e){}}
+function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));document.getElementById(id).classList.add("active");if(id==="map")renderMap();if(id==="avatarShop")document.getElementById("shopGold").textContent=state.gold;if(id==="gameModes")renderModes();if(id==="teacherDashboard")teacherRefresh();updateHUD()}
+function updateHUD(){document.getElementById("hudName").textContent=state.name;document.getElementById("hudExp").textContent=state.exp;document.getElementById("hudGold").textContent=state.gold;document.getElementById("playerName").textContent=state.name;document.getElementById("playerEmoji").textContent=state.avatar;document.getElementById("rank").textContent=state.completed.length>=20?"Legendary Historian":state.completed.length>=10?"Temporal Knight":state.completed.length>=5?"Islamic Historian":"History Beginner"}
+
+const gameModes=[
+{id:"story",icon:"📖",title:"Story Campaign",desc:"Mode utama: jelajahi 20 level sejarah secara berurutan."},
+{id:"timeattack",icon:"⏱️",title:"Time Attack",desc:"Jawab cepat, raih EXP bonus."},
+{id:"survival",icon:"❤️",title:"Survival Mode",desc:"Jawaban salah mengurangi HP lebih besar."},
+{id:"timeline",icon:"🧩",title:"Timeline Puzzle",desc:"Fokus pada kronologi peristiwa sejarah."},
+{id:"boss",icon:"🐉",title:"Boss Battle",desc:"Pertarungan gerbang dengan bonus EXP."},
+{id:"relic",icon:"💎",title:"Relic Hunt",desc:"Kumpulkan relic melalui jawaban benar dan combo."},
+{id:"daily",icon:"📅",title:"Daily Mission",desc:"Misi ringkas dengan bonus penyelesaian."}
+];
+function renderModes(){let g=document.getElementById("modeGrid");g.innerHTML="";gameModes.forEach(m=>{let b=document.createElement("button");b.className="modecard";b.innerHTML=`<span class="modeicon">${m.icon}</span><b>${m.title}</b><small style="display:block;margin-top:8px;color:#b5dcca">${m.desc}</small>`;b.onclick=()=>{state.gameMode=m.id;save();alert("Mode "+m.title+" dipilih! Mulai level dari pohon waktu.");show("map")};g.appendChild(b)})}
+function teacherLogin(){let id=document.getElementById("teacherId").value.trim();if(id==="SCU562599"){document.getElementById("teacherError").textContent="";show("teacherDashboard")}else{document.getElementById("teacherError").textContent="ID guru tidak valid. Periksa kembali ID.";}}
+function teacherRefresh(){document.getElementById("teacherPlayers").textContent=state.name&&state.name!=="Penjelajah"?"1":"0";document.getElementById("teacherLevels").textContent=state.completed.length+" / 20";document.getElementById("teacherExp").textContent=state.exp;document.getElementById("teacherAccuracy").textContent=state.attempted?Math.round(state.lastAccuracy)+"%":"—";let info=document.getElementById("teacherStudentInfo");if(info)info.innerHTML=`<b>Data pemain pada perangkat ini</b><br>Nama: ${state.name}<br>Kelas: ${state.kelas||"—"}<br>No. peserta: ${state.no||"—"}<br>Avatar: ${state.avatar}<br>Mode terakhir: ${(gameModes.find(m=>m.id===state.gameMode)||gameModes[0]).title}<br>Level selesai: ${state.completed.map(x=>x+1).join(", ")||"Belum ada"}<br>Koin: ${state.gold}`;}
+function exportTeacherCSV(){let rows=[["Nama","Kelas","Nomor Peserta","EXP","Gold","Level Selesai","Mode","Akurasi"],[state.name,state.kelas,state.no,state.exp,state.gold,state.completed.map(x=>x+1).join(";"),state.gameMode,state.lastAccuracy+"%"]];let csv=rows.map(r=>r.map(v=>'"'+String(v??"").replace(/"/g,'""')+'"').join(",")).join("\\n");let blob=new Blob(["\\ufeff"+csv],{type:"text/csv;charset=utf-8;"});let a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="rekap_temporal_quest.csv";a.click();URL.revokeObjectURL(a.href)}
+function teacherClearLocal(){if(confirm("Hapus progres pemain pada browser ini?")){localStorage.removeItem("temporalQuestSave");location.reload()}}
+function startGame(){let n=document.getElementById("name").value.trim();if(!n){alert("Masukkan nama pemain!");return}state.name=n;state.kelas=document.getElementById("kelas").value;state.no=document.getElementById("no").value;state.avatar=document.getElementById("avatar").value;document.getElementById("player").style.display="flex";save();updateHUD();show("map")}
+function renderMap(){let g=document.getElementById("mapgrid");g.innerHTML="";for(let i=0;i<20;i++){let done=state.completed.includes(i),open=i===0||state.completed.includes(i-1);let b=document.createElement("button");b.className="level "+(done?"done":open?"current":"");b.disabled=!open;b.innerHTML=`<span class="branch">${done?"🌟":open?"🌀":"🔒"}</span><b>LEVEL ${String(i+1).padStart(2,"0")}</b><small>${names[i]}<br>${done?"Cabang pulih":open?"Portal terbuka":"Cabang terkunci"}</small>`;b.onclick=()=>beginLevel(i);g.appendChild(b)}document.getElementById("mapProgress").style.width=(state.completed.length/20*100)+"%"}
+function beginLevel(i){state.level=i;state.question=0;state.correct=0;state.streak=0;state.health=100;document.getElementById("portal").classList.add("open");setTimeout(()=>document.getElementById("portal").classList.remove("open"),700);show("quiz");renderQuestion()}
+function renderQuestion(){let q=levels[state.level][2][state.question];document.getElementById("levelTag").textContent="LEVEL "+String(state.level+1).padStart(2,"0")+" • "+((gameModes.find(m=>m.id===state.gameMode)||gameModes[0]).title).toUpperCase();document.getElementById("levelName").textContent=names[state.level];document.getElementById("qcount").textContent=`Soal ${state.question+1} dari ${levels[state.level][2].length}`;document.getElementById("quizProgress").style.width=(state.question/levels[state.level][2].length*100)+"%";document.getElementById("question").textContent=q[0];let a=document.getElementById("answers");a.innerHTML="";q.slice(1,5).forEach((v,j)=>{let b=document.createElement("button");b.className="answer";b.textContent=String.fromCharCode(65+j)+". "+v;b.onclick=()=>answer(j,b);a.appendChild(b)});document.getElementById("feedback").textContent="";document.getElementById("nextBtn").disabled=true;document.getElementById("streak").textContent=state.streak;document.getElementById("health").textContent=state.health}
+function answer(j,btn){let q=levels[state.level][2][state.question],correct=j===q[5];state.attempted=(state.attempted||0)+1;state.lastAccuracy=(state.correct+(correct?1:0))/(state.question+1)*100;document.querySelectorAll(".answer").forEach(b=>b.disabled=true);if(correct){btn.classList.add("correct");state.correct++;state.streak++;state.exp+=state.gameMode==="timeattack"?150:state.gameMode==="boss"?200:100;state.gold+=state.gameMode==="relic"?35:20;document.getElementById("feedback").textContent="✨ BENAR! +100 EXP • +20 GOLD — "+q[6]}else{btn.classList.add("wrong");document.querySelectorAll(".answer")[q[5]].classList.add("correct");state.streak=0;state.health=Math.max(0,state.health-(state.gameMode==="survival"?25:15));document.getElementById("feedback").textContent="⏳ Belum tepat. "+q[6]}if(state.streak>=3){state.exp+=50;document.getElementById("feedback").textContent+=" 🔥 COMBO +50 EXP!"}document.getElementById("streak").textContent=state.streak;document.getElementById("health").textContent=state.health;document.getElementById("nextBtn").disabled=false;save();updateHUD()}
+function nextQuestion(){state.question++;if(state.question>=levels[state.level][2].length){finishLevel()}else renderQuestion()}
+function finishLevel(){if(!state.completed.includes(state.level)){state.completed.push(state.level);state.gold+=state.gameMode==="daily"?100:50;state.exp+=state.gameMode==="daily"?300:200}save();document.getElementById("resultTitle").textContent=state.correct>=4?"🌟 LEVEL COMPLETED!":"⟡ MISSION FINISHED";document.getElementById("resultAvatar").textContent=state.avatar;document.getElementById("resultScore").textContent=`${state.correct}/${levels[state.level][2].length} Jawaban Benar`;document.getElementById("resultDetail").textContent=`EXP: ${state.exp} • Gold: ${state.gold} • Cabang temporal berhasil dipulihkan!`;show("result");updateHUD();document.getElementById("portal").classList.add("open");setTimeout(()=>document.getElementById("portal").classList.remove("open"),900)}
+function nextLevel(){if(state.level<19){state.level++;beginLevel(state.level)}else show("map")}
+function pauseGame(){if(confirm("Jeda permainan dan kembali ke pohon waktu?"))show("map")}
+function buy(cost,item){if(state.gold<cost){alert("Koin belum cukup! Selesaikan level untuk mendapat koin.");return}state.gold-=cost;state.inventory.push(item);state.avatar=item;save();updateHUD();document.getElementById("shopGold").textContent=state.gold;alert("Item berhasil dibeli dan dipakai!")}
+function resetGame(){if(confirm("Hapus seluruh progres game di perangkat ini?")){localStorage.removeItem("temporalQuestSave");location.reload()}}
+load();updateHUD();
+for(let i=0;i<35;i++){let p=document.createElement("i");p.className="particle";p.style.left=Math.random()*100+"%";p.style.animationDelay=Math.random()*8+"s";p.style.animationDuration=(5+Math.random()*9)+"s";document.getElementById("particles").appendChild(p)}
+let secs=0;setInterval(()=>{secs++;let m=Math.floor(secs/60),s=secs%60;document.getElementById("clock").textContent=String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");if(secs%60===0){let msgs=["Temporal energy detected…","Another timeline is awakening…","History is waiting for its guardian…","Time is unstable. Continue your mission."];if(document.querySelector("#quiz.active"))document.getElementById("feedback").textContent=msgs[Math.floor(Math.random()*msgs.length)]}},1000);
+</script>
+</body></html>
